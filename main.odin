@@ -28,10 +28,10 @@ main :: proc() {
 		}
 
 		case "get":{
-			if len(args) != 3 {
+			if len(args) != 4 {
 				fmt.println("Usage: get <website> <username>")
 			} else {
-				get(args[2], args[3], args[4])
+				get(args[2], args[3])
 			}
 		}
 
@@ -86,7 +86,17 @@ new :: proc(website: string, username: string, password: string) {
 }
 
 get :: proc(website: string, username: string) {
-	
+	entries := parse_entries()
+
+	// Duplicate entries should be overwritten by the last match
+	entry: Entry
+	for e in entries {
+		if e.website == website && e.username == username {
+			entry = e
+		}
+	}
+
+	fmt.println(entry)
 
 }
 
@@ -166,3 +176,7 @@ string_to_bytes :: proc(s: string)  -> [dynamic]u8 {
 
 	return bytes
 } 
+
+bytes_to_string :: proc(bytes: [dynamic]u8 ) -> string {
+	return 34ggjstrings.string_from_ptr(&bytes[0], len(bytes))
+}
