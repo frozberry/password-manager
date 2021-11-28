@@ -75,3 +75,16 @@ parse_entries :: proc(bytes: []u8) -> []Entry {
 	todo := []Entry{e}
 	return todo
 }
+
+// Is this supposed to be a lib function for now?
+string_to_bytes :: proc(s: string)  -> [dynamic]u8 {
+	pointer := strings.ptr_from_string(s)
+	bytes := [dynamic]u8{}
+
+	for i in 0..<len(s) {
+		append(&bytes, pointer^)
+		pointer = (cast(^u8)(uintptr(pointer) + 1 ))
+	}
+
+	return bytes
+} 
