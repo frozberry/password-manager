@@ -12,6 +12,12 @@ Entry :: struct {
 
 main :: proc() {
 	args := os._alloc_command_line_arguments()
+	
+	_, file_err := os.stat("db")
+	if file_err != 0 {
+		fmt.println("Creating db file")
+		os.write_entire_file("db", []u8{})
+	}
 
 	if len(args) < 2 {
 		fmt.println("Subcommands: new, delete, list")
