@@ -27,12 +27,20 @@ main :: proc() {
 			}
 		}
 
+		case "get":{
+			if len(args) != 3 {
+				fmt.println("Usage: get <website> <username>")
+			} else {
+				get(args[2], args[3], args[4])
+			}
+		}
+
 		case "list": {
 			list()
 		}
 
 		case "delete": {
-			if len(args) != 5 {
+			if len(args) != 3 {
 					fmt.println("Usage: delete <website>")
 				} else {
 					delete(args[2])
@@ -70,12 +78,16 @@ new :: proc(website: string, username: string, password: string) {
 		append(&entry, b)
 	}
 
-
 	db := read_db()
 	for b in entry {
 		append(&db, b)
 	}
 	os.write_entire_file("db", db[:])
+}
+
+get :: proc(website: string, username: string) {
+	
+
 }
 
 list :: proc() {
