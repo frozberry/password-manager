@@ -86,18 +86,25 @@ new :: proc(website: string, username: string, password: string) {
 }
 
 get :: proc(website: string, username: string) {
-	entries := parse_entries()
+	db := read_db()
+	entries := parse_entries(db[:])
 
 	// Duplicate entries should be overwritten by the last match
 	entry: Entry
+	found := false
 	for e in entries {
 		if e.website == website && e.username == username {
 			entry = e
+			found = true
 		}
 	}
 
-	fmt.println(entry)
-
+	// Should introduce a the "found", or test for empty Entry?
+	if found {
+		fmt.println(entry.password_hash)
+	} else {
+		fmt.println("Website / username combination not found")
+	}
 }
 
 list :: proc() {
@@ -149,9 +156,9 @@ parse_entries :: proc(bytes: []u8) -> []Entry {
 		p_bytes := buffer[:p_len]
 		buffer = buffer[p_len:]
 
-		website := strings.string_from_ptr(&w_bytes[0], len(w_bytes))
-		username := strings.string_from_ptr(&u_bytes[0], len(u_bytes))
-		password := strings.string_from_ptr(&p_bytes[0], len(p_bytes))
+		website := bytes_to_string(w_bytes)
+		username := bytes_to_string(u_bytes)
+		password := bytes_to_string(p_bytes)
 
 		entry := Entry{website, username, password}
 		append(&entries, entry)
@@ -164,7 +171,7 @@ parse_entries :: proc(bytes: []u8) -> []Entry {
 	return entries[:]
 }
 
-// Is this supposed to be a lib function for now?
+// Is this supposed to be a lib function now?
 string_to_bytes :: proc(s: string)  -> [dynamic]u8 {
 	pointer := strings.ptr_from_string(s)
 	bytes := [dynamic]u8{}
@@ -177,6 +184,7 @@ string_to_bytes :: proc(s: string)  -> [dynamic]u8 {
 	return bytes
 } 
 
-bytes_to_string :: proc(bytes: [dynamic]u8 ) -> string {
-	return 34ggjstrings.string_from_ptr(&bytes[0], len(bytes))
+// Is this supposed to be a lib function?
+bytes_to_string :: proc(bytes: []u8 ) -> string {
+	return strings.string_from_ptr(&bytes[0], len(bytes))
 }
