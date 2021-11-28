@@ -79,7 +79,7 @@ get :: proc(website: string, username: string) {
 		}
 	}
 
-	// Should introduce a the "found", or test for empty Entry?
+	// Should I use the "found" found, or test for empty an Entry?
 	if found {
 		fmt.println(entry.password_hash)
 	} else {
@@ -125,8 +125,6 @@ delete :: proc(website: string, username: string) {
 	} else {
 		fmt.printf("%s %s does not exist\n", website, username)
 	}
-
-
 
 	os.write_entire_file("db", new_entries_bytes[:])
 }
