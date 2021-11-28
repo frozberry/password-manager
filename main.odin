@@ -23,6 +23,8 @@ main :: proc() {
 			if len(args) != 5 {
 				fmt.println("Usage: new <website> <username> <password>")
 			} else {
+				// Overwrite previouso entries if they exist
+				delete(args[2], args[3])
 				new(args[2], args[3], args[4])
 			}
 		}
@@ -54,14 +56,15 @@ main :: proc() {
 }
 
 new :: proc(website: string, username: string, password: string) {
-	fmt.println("new")
-
 	entry_bytes := input_to_bytes(website, username, password)
 
 	db := read_db()
+	entries := parse_entries(db[:])
+
 	for b in entry_bytes {
 		append(&db, b)
 	}
+
 	os.write_entire_file("db", db[:])
 }
 
@@ -101,13 +104,10 @@ delete :: proc(website: string, username: string) {
 	entries := parse_entries(db[:])
 
 	new_entries := [dynamic]Entry{}
-	exists := false
 
 	for e in entries {
 		if !(e.website == website && e.username == username) {
 			append(&new_entries, e)
-		} else {
-			exists = true
 		}
 	}
 
@@ -118,12 +118,6 @@ delete :: proc(website: string, username: string) {
 		for b in bytes {
 			append(&new_entries_bytes, b)
 		}
-	}
-
-	if (exists) {
-		fmt.printf("Succesfully deleted %s %s\n", website, username)
-	} else {
-		fmt.printf("%s %s does not exist\n", website, username)
 	}
 
 	os.write_entire_file("db", new_entries_bytes[:])
@@ -144,6 +138,9 @@ read_db :: proc() -> [dynamic]u8 {
 
 parse_entries :: proc(bytes: []u8) -> []Entry {
 	entries := [dynamic]Entry{}
+	if len(bytes) == 0 {
+		return []Entry{}
+	}
 
 	// Can't assign to proc param
 	buffer := bytes
