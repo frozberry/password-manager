@@ -75,10 +75,16 @@ new :: proc(website: string, username: string, password: string) {
 	for b in entry {
 		append(&db, b)
 	}
+	os.write_entire_file("db", db[:])
 }
 
 list :: proc() {
-	fmt.println("list")
+	db := read_db()
+	entries := parse_entries(db[:])
+	
+	for entry in entries {
+		fmt.printf("Site: %s, Username: %s\n", entry.website, entry.username)
+	}
 }
 
 delete :: proc(website: string) {
@@ -99,9 +105,41 @@ read_db :: proc() -> [dynamic]u8 {
 }
 
 parse_entries :: proc(bytes: []u8) -> []Entry {
-	e := Entry{"website", "username", "pass"}
-	todo := []Entry{e}
-	return todo
+	entries := [dynamic]Entry{}
+
+	// Can't assign to proc param
+	buffer := bytes
+
+	// I'm guessing there's a library for this?
+	for true {
+		w_len := buffer[0]
+		u_len := buffer[1]
+		p_len := buffer[2]
+
+		buffer = buffer[3:]
+
+		w_bytes := buffer[:w_len]
+		buffer = buffer[w_len:]
+
+		u_bytes := buffer[:u_len]
+		buffer = buffer[u_len:]
+
+		p_bytes := buffer[:p_len]
+		buffer = buffer[p_len:]
+
+		website := strings.string_from_ptr(&w_bytes[0], len(w_bytes))
+		username := strings.string_from_ptr(&u_bytes[0], len(u_bytes))
+		password := strings.string_from_ptr(&p_bytes[0], len(p_bytes))
+
+		entry := Entry{website, username, password}
+		append(&entries, entry)
+
+		if len(buffer) == 0 {
+			break
+		}
+	}
+
+	return entries[:]
 }
 
 // Is this supposed to be a lib function for now?
