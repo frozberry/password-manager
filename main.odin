@@ -56,30 +56,10 @@ main :: proc() {
 new :: proc(website: string, username: string, password: string) {
 	fmt.println("new")
 
-	// Stylistically, is it better to just do this all inline?
-	w_len := u8(len(website))
-	u_len := u8(len(username))
-	p_len := u8(len(password))
-
-	entry := [dynamic]u8{w_len, u_len, p_len}
-
-	w_bytes := string_to_bytes(website)
-	u_bytes := string_to_bytes(username)
-	p_bytes := string_to_bytes(password)
-
-	// Is there an easier way to combine two arrays? In rust I can call .flatten()
-	for b in w_bytes {
-		append(&entry, b)
-	}
-	for b in u_bytes {
-		append(&entry, b)
-	}
-	for b in p_bytes {
-		append(&entry, b)
-	}
+	entry_bytes := input_to_bytes(website, username, password)
 
 	db := read_db()
-	for b in entry {
+	for b in entry_bytes {
 		append(&db, b)
 	}
 	os.write_entire_file("db", db[:])
@@ -169,6 +149,32 @@ parse_entries :: proc(bytes: []u8) -> []Entry {
 	}
 
 	return entries[:]
+}
+
+input_to_bytes :: proc(website: string, username: string, password: string) -> []u8 {
+	// Stylistically, is it better to just do this all inline?
+	w_len := u8(len(website))
+	u_len := u8(len(username))
+	p_len := u8(len(password))
+
+	entry := [dynamic]u8{w_len, u_len, p_len}
+
+	w_bytes := string_to_bytes(website)
+	u_bytes := string_to_bytes(username)
+	p_bytes := string_to_bytes(password)
+
+	// Is there an easier way to combine two arrays? In rust I can call .flatten()
+	for b in w_bytes {
+		append(&entry, b)
+	}
+	for b in u_bytes {
+		append(&entry, b)
+	}
+	for b in p_bytes {
+		append(&entry, b)
+	}
+
+	return entry[:]
 }
 
 // Is this supposed to be a lib function now?
