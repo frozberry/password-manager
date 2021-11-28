@@ -40,10 +40,10 @@ main :: proc() {
 		}
 
 		case "delete": {
-			if len(args) != 3 {
-					fmt.println("Usage: delete <website>")
+			if len(args) != 4 {
+					fmt.println("Usage: delete <website> <username>")
 				} else {
-					delete(args[2])
+					delete(args[2], args[3])
 				}
 			}
 		
@@ -96,8 +96,39 @@ list :: proc() {
 	}
 }
 
-delete :: proc(website: string) {
-	fmt.println("delete")
+delete :: proc(website: string, username: string) {
+	db := read_db()
+	entries := parse_entries(db[:])
+
+	new_entries := [dynamic]Entry{}
+	exists := false
+
+	for e in entries {
+		if !(e.website == website && e.username == username) {
+			append(&new_entries, e)
+		} else {
+			exists = true
+		}
+	}
+
+	new_entries_bytes := [dynamic]u8{}
+
+	for e in new_entries {
+		bytes := input_to_bytes(e.website, e.username, e.password_hash)
+		for b in bytes {
+			append(&new_entries_bytes, b)
+		}
+	}
+
+	if (exists) {
+		fmt.printf("Succesfully deleted %s %s\n", website, username)
+	} else {
+		fmt.printf("%s %s does not exist\n", website, username)
+	}
+
+
+
+	os.write_entire_file("db", new_entries_bytes[:])
 }
 
 hash :: proc(password: string) -> string {
