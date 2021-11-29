@@ -28,7 +28,6 @@ main :: proc() {
 
 	fmt.println("Master password:")
 	input_password := get_user_input()
-	fmt.println("input_password", input_password)
 	input_hash := md5.hash_string(input_password)
 	copy_slice(KEY[:], input_hash[:])
 
