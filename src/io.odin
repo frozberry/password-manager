@@ -32,6 +32,7 @@ get_user_input :: proc() -> string{
 }
 
 parse_saved_password_hash :: proc(db: []u8) -> []u8 {
+	db := read_db()
 	return db[:16]
 }
 

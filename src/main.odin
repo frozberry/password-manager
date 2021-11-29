@@ -14,7 +14,7 @@ USER_INPUT_PASSWORD : string
 Entry :: struct {
 	website: string,
 	username: string,
-	password_hash: string,
+	password: string,
 }
 
 main :: proc() {

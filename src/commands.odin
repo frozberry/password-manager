@@ -34,7 +34,7 @@ get :: proc(website: string, username: string) {
 
 	// Should I use the "found" found, or test for empty an Entry?
 	if found {
-		fmt.println(entry.password_hash)
+		fmt.println(entry.password)
 	} else {
 		fmt.println("Website / username combination not found")
 	}
@@ -69,7 +69,7 @@ delete :: proc(website: string, username: string) {
 	}
 
 	for e in new_entries {
-		bytes := input_to_bytes(e.website, e.username, e.password_hash)
+		bytes := input_to_bytes(e.website, e.username, e.password)
 		for b in bytes {
 			append(&new_entries_bytes, b)
 		}
