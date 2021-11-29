@@ -6,12 +6,15 @@ import "core:os"
 
 
 new :: proc(website: string, username: string, password: string) {
-	// I convert between bytes and string multiple times here
+	// I convert between bytes and string multiple times here, gross
+	// How does encrypt change a global variable???
 
 	password_bytes := string_to_bytes(password)
 	encrytped_password := encrypt(password_bytes[:])
 	encrytped_password_string := bytes_to_string(encrytped_password)
 	entry_bytes := input_to_bytes(website, username, encrytped_password_string)
+
+
 
 	db := read_db()
 	entries := parse_entries(db[:])
@@ -39,7 +42,11 @@ get :: proc(website: string, username: string) {
 
 	// Should I use the "found" found, or test for empty an Entry?
 	if found {
-		fmt.println(entry.password)
+		password_bytes := string_to_bytes(entry.password)
+		// Currently only works if I disable checking tag
+		decrypted := decrypt(password_bytes[:])
+
+		fmt.println(bytes_to_string(decrypted))
 	} else {
 		fmt.println("Website / username combination not found")
 	}

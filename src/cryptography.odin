@@ -27,7 +27,7 @@ encrypt :: proc(plaintext: []byte) -> []byte {
 decrypt :: proc(ciphertext: []byte) -> []byte {
    given_plaintext := make([]byte, len(ciphertext)) // Allocate enough memory for our decrypted message
 
-   chacha20poly1305.decrypt(
+	chacha20poly1305.decrypt(
       given_plaintext[:],
       TAG[:],
       KEY[:],
