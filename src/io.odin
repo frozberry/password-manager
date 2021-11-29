@@ -20,15 +20,20 @@ check_db_exists :: proc() {
 
 	if len(db) < 16 {
 		fmt.println("Please enter a new master password: ")
-		input_password := "hunter2"
+		input_password := get_user_input()
 
 		master_hash := md5.hash_string(input_password)
 		os.write_entire_file("db", master_hash[:])
 	}
 }
 
-get_user_input :: proc() -> string{
-	return "hunter2"
+get_user_input :: proc() -> string {
+	buff: [255]u8
+    len, err := os.read(os.stdin, buff[:])
+	fmt.println("buffer", buff[:])
+	fmt.println("buffer", buff[:len - 1])
+	fmt.println(bytes_to_string(buff[:len - 1]))
+	return bytes_to_string(buff[:len - 1])
 }
 
 parse_saved_password_hash :: proc() -> []u8 {

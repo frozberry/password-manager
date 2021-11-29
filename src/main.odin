@@ -26,13 +26,14 @@ main :: proc() {
 
 	check_db_exists()
 
+	fmt.println("Master password:")
 	input_password := get_user_input()
-	hashed_input := md5.hash_string(input_password)
-	copy_slice(KEY[:], hashed_input[:])
-
+	fmt.println("input_password", input_password)
 	input_hash := md5.hash_string(input_password)
-	saved_password_hash := parse_saved_password_hash()
+	copy_slice(KEY[:], input_hash[:])
 
+	saved_password_hash := parse_saved_password_hash()
+	
 	assert(hashes_match(saved_password_hash, input_hash[:]), "Incorrect master password")
 
 	switch args[1] {
