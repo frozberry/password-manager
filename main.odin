@@ -159,6 +159,14 @@ parse_entries :: proc(bytes: []u8) -> []Entry {
 	// Can't assign to proc param
 	buffer := bytes
 
+	master_bytes := buffer[:16]
+	buffer = buffer[16:]
+
+	// Incomplete
+	if !hashes_match(master_bytes, md5.hash_string(user_input_master)) {
+		fmt.println("Incorrect password, prog should re-prompt")
+	}
+
 	// I'm guessing there's a library for this?
 	for true {
 		w_len := buffer[0]
@@ -221,6 +229,9 @@ decrypt :: proc(ciphertext: []byte) -> []byte {
    return given_plaintext
 }
 
+hashes_match :: #force_inline proc "contextless"(lhs: []byte, rhs: []byte) -> bool {
+   return mem.compare(lhs, rhs) == 0
+}
 
 
 input_to_bytes :: proc(website: string, username: string, password: string) -> []u8 {
