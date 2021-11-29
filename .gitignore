@@ -2,3 +2,5 @@ test.odin
 test
 main
 db
+crypto.odin
+crypto
