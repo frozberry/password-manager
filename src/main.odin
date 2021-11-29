@@ -19,29 +19,19 @@ Entry :: struct {
 
 main :: proc() {
 	args := os._alloc_command_line_arguments()
-	
-	db := read_db()
-	if len(db) < 16 {
-		fmt.println("Please enter a new master password: ")
-		USER_INPUT_PASSWORD = "hunter2"
-
-		master_hash := md5.hash_string(USER_INPUT_PASSWORD)
-		os.write_entire_file("db", master_hash[:])
-	}
-
-	USER_INPUT_PASSWORD = "hunter2"
-	input_hash := md5.hash_string(USER_INPUT_PASSWORD)
-	saved_password_hash := parse_saved_password_hash(db[:])
-
-	assert(hashes_match(saved_password_hash, input_hash[:]), "Incorrect master password")
-
-
-
-
 	if len(args) < 2 {
 		fmt.println("Subcommands: new, delete, list")
 		return
 	}
+
+	check_db_exists()
+
+	USER_INPUT_PASSWORD = get_user_input()
+
+	input_hash := md5.hash_string(USER_INPUT_PASSWORD)
+	saved_password_hash := parse_saved_password_hash(db[:])
+
+	assert(hashes_match(saved_password_hash, input_hash[:]), "Incorrect master password")
 
 	switch args[1] {
 	case "new":{

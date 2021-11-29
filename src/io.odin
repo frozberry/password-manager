@@ -15,6 +15,22 @@ read_db :: proc() -> [dynamic]u8 {
 	return slice.to_dynamic(bytes)
 }
 
+check_db_exists :: proc() {
+	db := read_db()
+
+	if len(db) < 16 {
+		fmt.println("Please enter a new master password: ")
+		USER_INPUT_PASSWORD = "hunter2"
+
+		master_hash := md5.hash_string(USER_INPUT_PASSWORD)
+		os.write_entire_file("db", master_hash[:])
+	}
+}
+
+get_user_input :: proc() -> string{
+	return "hunter2"
+}
+
 parse_saved_password_hash :: proc(db: []u8) -> []u8 {
 	return db[:16]
 }
