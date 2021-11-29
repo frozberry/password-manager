@@ -25,40 +25,39 @@ main :: proc() {
 	}
 
 	switch args[1] {
-		case "new":{
-			if len(args) != 5 {
-				fmt.println("Usage: new <website> <username> <password>")
-			} else {
-				// Overwrite previouso entries if they exist
-				delete(args[2], args[3])
-				new(args[2], args[3], args[4])
-			}
-		}
-
-		case "get":{
-			if len(args) != 4 {
-				fmt.println("Usage: get <website> <username>")
-			} else {
-				get(args[2], args[3])
-			}
-		}
-
-		case "list": {
-			list()
-		}
-
-		case "delete": {
-			if len(args) != 4 {
-					fmt.println("Usage: delete <website> <username>")
-				} else {
-					delete(args[2], args[3])
-				}
-			}
-		
-		case: {
-			fmt.println("Subcommands: new, delete, list")
+	case "new":{
+		if len(args) != 5 {
+			fmt.println("Usage: new <website> <username> <password>")
+		} else {
+			// Overwrite previous entries if they exist
+			delete(args[2], args[3])
+			new(args[2], args[3], args[4])
 		}
 	}
+
+	case "get":{
+		if len(args) != 4 {
+			fmt.println("Usage: get <website> <username>")
+		} else {
+			get(args[2], args[3])
+		}
+	}
+
+	case "list": {
+		list()
+	}
+
+	case "delete": {
+		if len(args) != 4 {
+				fmt.println("Usage: delete <website> <username>")
+			} else {
+				delete(args[2], args[3])
+			}
+		}
+	
+	case: {
+		fmt.println("Subcommands: new, delete, list")
+	}}
 }
 
 new :: proc(website: string, username: string, password: string) {
