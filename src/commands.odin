@@ -63,6 +63,11 @@ delete :: proc(website: string, username: string) {
 
 	new_entries_bytes := [dynamic]u8{}
 
+	// Copy master password
+	for i in 0..15 {
+		append(&new_entries_bytes, db[i])
+	}
+
 	for e in new_entries {
 		bytes := input_to_bytes(e.website, e.username, e.password_hash)
 		for b in bytes {
