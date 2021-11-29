@@ -5,11 +5,11 @@ import "core:slice"
 import "core:os"
 import "core:crypto/md5"
 import "core:crypto/chacha20poly1305"
+import "core:mem"
 
 TAG   : [chacha20poly1305.TAG_SIZE]byte
 KEY   : [chacha20poly1305.KEY_SIZE]byte
 NONCE : [chacha20poly1305.NONCE_SIZE]byte
-USER_INPUT_PASSWORD : string
 
 Entry :: struct {
 	website: string,
@@ -26,10 +26,12 @@ main :: proc() {
 
 	check_db_exists()
 
-	USER_INPUT_PASSWORD = get_user_input()
+	input_password := get_user_input()
+	hashed_input := md5.hash_string(input_password)
+	copy_slice(KEY[:], hashed_input[:])
 
-	input_hash := md5.hash_string(USER_INPUT_PASSWORD)
-	saved_password_hash := parse_saved_password_hash(db[:])
+	input_hash := md5.hash_string(input_password)
+	saved_password_hash := parse_saved_password_hash()
 
 	assert(hashes_match(saved_password_hash, input_hash[:]), "Incorrect master password")
 

@@ -6,7 +6,12 @@ import "core:os"
 
 
 new :: proc(website: string, username: string, password: string) {
-	entry_bytes := input_to_bytes(website, username, password)
+	// I convert between bytes and string multiple times here
+
+	password_bytes := string_to_bytes(password)
+	encrytped_password := encrypt(password_bytes[:])
+	encrytped_password_string := bytes_to_string(encrytped_password)
+	entry_bytes := input_to_bytes(website, username, encrytped_password_string)
 
 	db := read_db()
 	entries := parse_entries(db[:])
@@ -43,7 +48,7 @@ get :: proc(website: string, username: string) {
 list :: proc() {
 	db := read_db()
 	entries := parse_entries(db[:])
-	
+
 	for entry in entries {
 		fmt.printf("Site: %s, Username: %s\n", entry.website, entry.username)
 	}
