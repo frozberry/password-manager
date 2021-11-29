@@ -15,22 +15,21 @@ read_db :: proc() -> [dynamic]u8 {
 	return slice.to_dynamic(bytes)
 }
 
+parse_saved_password_hash :: proc(db: []u8) -> []u8 {
+	return db[:16]
+}
+
 parse_entries :: proc(bytes: []u8) -> []Entry {
 	entries := [dynamic]Entry{}
-	if len(bytes) == 0 {
+	if len(bytes) == 16 {
 		return []Entry{}
 	}
 
 	// Can't assign to proc param
 	buffer := bytes
 
-	master_bytes := buffer[:16]
+	// Ignore master password bytes
 	buffer = buffer[16:]
-
-	// Incomplete
-	// if !hashes_match(master_bytes, md5.hash_string(user_input_master)) {
-	// 	fmt.println("Incorrect password, prog should re-prompt")
-	// }
 
 	// I'm guessing there's a library for this?
 	for true {

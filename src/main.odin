@@ -9,6 +9,7 @@ import "core:crypto/chacha20poly1305"
 TAG   : [chacha20poly1305.TAG_SIZE]byte
 KEY   : [chacha20poly1305.KEY_SIZE]byte
 NONCE : [chacha20poly1305.NONCE_SIZE]byte
+USER_INPUT_PASSWORD : string
 
 Entry :: struct {
 	website: string,
@@ -22,11 +23,20 @@ main :: proc() {
 	db := read_db()
 	if len(db) < 16 {
 		fmt.println("Please enter a new master password: ")
-		input := "hunter2"
+		USER_INPUT_PASSWORD = "hunter2"
 
-		master_hash := md5.hash_string(input)
+		master_hash := md5.hash_string(USER_INPUT_PASSWORD)
 		os.write_entire_file("db", master_hash[:])
 	}
+
+	USER_INPUT_PASSWORD = "hunter2"
+	input_hash := md5.hash_string(USER_INPUT_PASSWORD)
+	saved_password_hash := parse_saved_password_hash(db[:])
+
+	assert(hashes_match(saved_password_hash, input_hash[:]), "Incorrect master password")
+
+
+
 
 	if len(args) < 2 {
 		fmt.println("Subcommands: new, delete, list")
