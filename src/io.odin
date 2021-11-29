@@ -30,9 +30,9 @@ check_db_exists :: proc() {
 get_user_input :: proc() -> string {
 	buff: [255]u8
     len, err := os.read(os.stdin, buff[:])
-	fmt.println("buffer", buff[:])
-	fmt.println("buffer", buff[:len - 1])
-	fmt.println(bytes_to_string(buff[:len - 1]))
+	// fmt.println("buffer", buff[:])
+	// fmt.println("buffer", buff[:len - 1])
+	// fmt.println(bytes_to_string(buff[:len - 1]))
 	return bytes_to_string(buff[:len - 1])
 }
 

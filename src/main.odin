@@ -33,7 +33,7 @@ main :: proc() {
 	copy_slice(KEY[:], input_hash[:])
 
 	saved_password_hash := parse_saved_password_hash()
-	
+
 	assert(hashes_match(saved_password_hash, input_hash[:]), "Incorrect master password")
 
 	switch args[1] {
