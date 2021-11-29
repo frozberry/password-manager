@@ -3,6 +3,12 @@ import "core:fmt"
 import "core:strings"
 import "core:slice"
 import "core:os"
+import "core:crypto/md5"
+import "core:crypto/chacha20poly1305"
+
+TAG   : [chacha20poly1305.TAG_SIZE]byte
+KEY   : [chacha20poly1305.KEY_SIZE]byte
+NONCE : [chacha20poly1305.NONCE_SIZE]byte
 
 Entry :: struct {
 	website: string,
@@ -13,10 +19,13 @@ Entry :: struct {
 main :: proc() {
 	args := os._alloc_command_line_arguments()
 	
-	_, file_err := os.stat("db")
-	if file_err != 0 {
-		fmt.println("Creating db file")
-		os.write_entire_file("db", []u8{})
+	db := read_db()
+	if len(db) < 16 {
+		fmt.println("Please enter a new master password: ")
+		input := "hunter2"
+
+		master_hash := md5.hash_string(input)
+		os.write_entire_file("db", master_hash[:])
 	}
 
 	if len(args) < 2 {
@@ -135,7 +144,7 @@ hash :: proc(password: string) -> string {
 read_db :: proc() -> [dynamic]u8 {
 	bytes, success := os.read_entire_file("db")
 	if !success {
-		fmt.println("There was an error reading the db file")
+		fmt.println("db file is missing")
 		}
 	// When to use to_dyanmic() vs into_dynamic()
 	return slice.to_dynamic(bytes)
@@ -181,6 +190,38 @@ parse_entries :: proc(bytes: []u8) -> []Entry {
 
 	return entries[:]
 }
+
+encrypt :: proc(plaintext: []byte) -> []byte {
+   given_ciphertext := make([]byte, len(plaintext)) // Allocate enough memory for our ciphertext
+
+   chacha20poly1305.encrypt(
+      given_ciphertext[:],
+      TAG[:],
+      KEY[:],
+      NONCE[:],
+      nil,
+      plaintext,
+   )
+
+   return given_ciphertext
+}
+
+decrypt :: proc(ciphertext: []byte) -> []byte {
+   given_plaintext := make([]byte, len(ciphertext)) // Allocate enough memory for our decrypted message
+
+   chacha20poly1305.decrypt(
+      given_plaintext[:],
+      TAG[:],
+      KEY[:],
+      NONCE[:],
+      nil,
+      ciphertext[:],
+   )
+
+   return given_plaintext
+}
+
+
 
 input_to_bytes :: proc(website: string, username: string, password: string) -> []u8 {
 	// Stylistically, is it better to just do this all inline?
