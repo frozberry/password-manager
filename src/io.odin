@@ -15,7 +15,6 @@ read_db :: proc() -> [dynamic]u8 {
 	return slice.to_dynamic(bytes)
 }
 
-
 get_user_input :: proc() -> string {
 	// This caused a lot of pain, still don't fully understand the fix
 	buff := make([]u8, 255, context.temp_allocator)

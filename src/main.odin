@@ -63,12 +63,12 @@ main :: proc() {
 		if len(args) != 3 {
 			fmt.println("Usage: get <website> <username>")
 		} else {
-			get(args[1], args[2])
+			get(db, args[1], args[2])
 		}
 	}
 
 	case "list": {
-		list()
+		list(db)
 	}
 
 	case "delete": {

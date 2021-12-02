@@ -26,7 +26,7 @@ new :: proc(website: string, username: string, password: string) {
 	os.write_entire_file("db", db[:])
 }
 
-get :: proc(website: string, username: string) {
+get :: proc(db: []u8, website: string, username: string) {
 	db := read_db()
 	entries := parse_entries(db[:])
 
@@ -52,8 +52,7 @@ get :: proc(website: string, username: string) {
 	}
 }
 
-list :: proc() {
-	db := read_db()
+list :: proc(db: []u8) {
 	entries := parse_entries(db[:])
 
 	for entry in entries {
