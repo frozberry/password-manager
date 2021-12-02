@@ -13,6 +13,19 @@ get_user_input :: proc() -> string {
 	return bytes_to_string(buff[:len - 1])
 }
 
+
+// I added an bool return value because you did in your example
+// But is it really necesarry here? How would I handle an error occuring?
+buff_reader :: proc(bytes: ^[]u8, length: u8) -> ([]u8, bool) {
+	if len(bytes) <= 0 {
+		return []u8{}, false
+	}
+
+	read := bytes[:length]
+	bytes^ = bytes^[length:]
+	return read, true
+} 
+
 parse_entries :: proc(bytes: []u8) -> []Entry {
 	entries := [dynamic]Entry{}
 	if len(bytes) == 16 {
@@ -23,9 +36,8 @@ parse_entries :: proc(bytes: []u8) -> []Entry {
 	buffer := bytes
 
 	// Ignore master password bytes
-	buffer = buffer[16:]
+	_, _ = buff_reader(&buffer, 16)
 
-	// I'm guessing there's a library for this?
 	for true {
 		w_len := buffer[0]
 		u_len := buffer[1]
@@ -33,14 +45,9 @@ parse_entries :: proc(bytes: []u8) -> []Entry {
 
 		buffer = buffer[3:]
 
-		w_bytes := buffer[:w_len]
-		buffer = buffer[w_len:]
-
-		u_bytes := buffer[:u_len]
-		buffer = buffer[u_len:]
-
-		p_bytes := buffer[:p_len]
-		buffer = buffer[p_len:]
+		w_bytes, _ := buff_reader(&buffer, w_len)
+		u_bytes, _ := buff_reader(&buffer, u_len)
+		p_bytes, _ := buff_reader(&buffer, p_len)
 
 		website := bytes_to_string(w_bytes)
 		username := bytes_to_string(u_bytes)
