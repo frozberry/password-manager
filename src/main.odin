@@ -30,11 +30,10 @@ main :: proc() {
 	fmt.println("Master password:")
 	input_password := get_user_input()
 	input_hash := md5.hash_string(input_password)
-	copy_slice(KEY[:], input_hash[:])
-
 	saved_password_hash := parse_saved_password_hash()
-
 	assert(hashes_match(saved_password_hash, input_hash[:]), "Incorrect master password")
+
+	copy_slice(KEY[:], input_hash[:])
 
 	switch args[1] {
 	case "new":{
