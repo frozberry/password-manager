@@ -6,15 +6,6 @@ import "core:os"
 import "core:crypto/md5"
 import "core:crypto/chacha20poly1305"
 
-read_db :: proc() -> [dynamic]u8 {
-	bytes, success := os.read_entire_file("db")
-	if !success {
-		fmt.println("db file is missing")
-		}
-	// When to use to_dyanmic() vs into_dynamic()
-	return slice.to_dynamic(bytes)
-}
-
 get_user_input :: proc() -> string {
 	// This caused a lot of pain, still don't fully understand the fix
 	buff := make([]u8, 255, context.temp_allocator)
