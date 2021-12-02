@@ -5,22 +5,23 @@ import "core:slice"
 import "core:os"
 
 
-new_entry :: proc(db: u8[], website: string, username: string, password: string) {
+new_entry :: proc(db: []u8, website: string, username: string, password: string) {
 	// I convert between bytes and string multiple times here, gross
 	// How does encrypt change a global variable???
 
 	password_bytes := string_to_bytes(password)
 	encrytped_password := encrypt(password_bytes[:])
 	encrytped_password_string := bytes_to_string(encrytped_password)
+
 	entry_bytes := input_to_bytes(website, username, encrytped_password_string)
-	db := read_db()
-	entries := parse_entries(db[:])
+	entries := parse_entries(db)
+	dyn_db := slice.to_dynamic(db)
 
 	for b in entry_bytes {
-		append(&db, b)
+		append(&dyn_db, b)
 	}
 
-	os.write_entire_file("db", db[:])
+	os.write_entire_file("db", dyn_db[:])
 }
 
 get :: proc(db: []u8, website: string, username: string) {
