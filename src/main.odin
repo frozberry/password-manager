@@ -19,7 +19,8 @@ Entry :: struct {
 
 main :: proc() {
 	args := os._alloc_command_line_arguments()
-	if len(args) < 2 {
+	args = args[1:]
+	if len(args) < 1 {
 		fmt.println("Subcommands: new, delete, list")
 		return
 	}
@@ -37,20 +38,20 @@ main :: proc() {
 
 	switch args[1] {
 	case "new":{
-		if len(args) != 5 {
+		if len(args) != 4 {
 			fmt.println("Usage: new <website> <username> <password>")
 		} else {
 			// Overwrite previous entries if they exist
-			delete(args[2], args[3])
-			new(args[2], args[3], args[4])
+			delete(args[1], args[2])
+			new(args[1], args[2], args[3])
 		}
 	}
 
 	case "get":{
-		if len(args) != 4 {
+		if len(args) != 3 {
 			fmt.println("Usage: get <website> <username>")
 		} else {
-			get(args[2], args[3])
+			get(args[1], args[2])
 		}
 	}
 
@@ -59,10 +60,10 @@ main :: proc() {
 	}
 
 	case "delete": {
-		if len(args) != 4 {
+		if len(args) != 3 {
 				fmt.println("Usage: delete <website> <username>")
 			} else {
-				delete(args[2], args[3])
+				delete(args[1], args[2])
 			}
 		}
 	
