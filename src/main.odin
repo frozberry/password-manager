@@ -54,8 +54,8 @@ main :: proc() {
 			fmt.println("Usage: new <website> <username> <password>")
 		} else {
 			// Overwrite previous entries if they exist
-			delete(args[1], args[2])
-			new(args[1], args[2], args[3])
+			delete_entry(args[1], args[2])
+			new_entry(args[1], args[2], args[3])
 		}
 	}
 
@@ -75,7 +75,7 @@ main :: proc() {
 		if len(args) != 3 {
 				fmt.println("Usage: delete <website> <username>")
 			} else {
-				delete(args[1], args[2])
+				delete_entry(args[1], args[2])
 			}
 		}
 	

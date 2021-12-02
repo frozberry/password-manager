@@ -5,7 +5,7 @@ import "core:slice"
 import "core:os"
 
 
-new :: proc(website: string, username: string, password: string) {
+new_entry :: proc(website: string, username: string, password: string) {
 	// I convert between bytes and string multiple times here, gross
 	// How does encrypt change a global variable???
 
@@ -60,7 +60,7 @@ list :: proc(db: []u8) {
 	}
 }
 
-delete :: proc(website: string, username: string) {
+delete_entry :: proc(website: string, username: string) {
 	db := read_db()
 	entries := parse_entries(db[:])
 
