@@ -20,22 +20,35 @@ Entry :: struct {
 main :: proc() {
 	args := os._alloc_command_line_arguments()
 	args = args[1:]
+
 	if len(args) < 1 {
 		fmt.println("Subcommands: new, delete, list")
 		return
 	}
 
-	check_db_exists()
+	db, db_exists := os.read_entire_file("db")
 
-	fmt.println("Master password:")
-	input_password := get_user_input()
-	input_hash := md5.hash_string(input_password)
-	saved_password_hash := parse_saved_password_hash()
-	assert(hashes_match(saved_password_hash, input_hash[:]), "Incorrect master password")
+	if !db_exists {
+		fmt.println("Create a master password:")
 
-	copy_slice(KEY[:], input_hash[:])
+		master_password := get_user_input()
+		master_hash := md5.hash_string(master_password)
 
-	switch args[1] {
+		db = master_hash[:]
+
+		os.write_entire_file("db", master_hash[:])
+	} else {
+		fmt.println("Enter your master password:")
+		password_input := get_user_input()
+		hashed_input := md5.hash_string(password_input)
+		saved_password_hash := db[:16]
+
+		assert(hashes_match(saved_password_hash, hashed_input[:]), "Incorrect master password")
+	}
+
+	copy_slice(KEY[:], db[:16])
+
+	switch args[0] {
 	case "new":{
 		if len(args) != 4 {
 			fmt.println("Usage: new <website> <username> <password>")

@@ -15,28 +15,12 @@ read_db :: proc() -> [dynamic]u8 {
 	return slice.to_dynamic(bytes)
 }
 
-check_db_exists :: proc() {
-	db := read_db()
-
-	if len(db) < 16 {
-		fmt.println("Please enter a new master password: ")
-		input_password := get_user_input()
-
-		master_hash := md5.hash_string(input_password)
-		os.write_entire_file("db", master_hash[:])
-	}
-}
 
 get_user_input :: proc() -> string {
 	// This caused a lot of pain, still don't fully understand the fix
 	buff := make([]u8, 255, context.temp_allocator)
     len, _ := os.read(os.stdin, buff[:])
 	return bytes_to_string(buff[:len - 1])
-}
-
-parse_saved_password_hash :: proc() -> []u8 {
-	db := read_db()
-	return db[:16]
 }
 
 parse_entries :: proc(bytes: []u8) -> []Entry {
