@@ -57,9 +57,11 @@ list :: proc(db: []u8) {
 	}
 }
 
-delete_entry :: proc(website: string, username: string) {
-	db := read_db()
-	entries := parse_entries(db[:])
+
+// I'm reconstructing the db instead of deleting the relevant bytes.
+// What's the proper way of doing this?
+delete_entry :: proc(db: []u8, website: string, username: string, save: bool) -> []u8 {
+	entries := parse_entries(db)
 
 	new_entries := [dynamic]Entry{}
 
@@ -72,7 +74,7 @@ delete_entry :: proc(website: string, username: string) {
 	new_entries_bytes := [dynamic]u8{}
 
 	// Copy master password
-	for i in 0..15 {
+	for i in 0..<16 {
 		append(&new_entries_bytes, db[i])
 	}
 
@@ -83,5 +85,10 @@ delete_entry :: proc(website: string, username: string) {
 		}
 	}
 
-	os.write_entire_file("db", new_entries_bytes[:])
+	if save {
+		os.write_entire_file("db", new_entries_bytes[:])
+	}
+
+	// Returns so new_entry() has access to updated db
+	return new_entries_bytes[:]
 }

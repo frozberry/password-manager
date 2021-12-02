@@ -54,7 +54,8 @@ main :: proc() {
 			fmt.println("Usage: new <website> <username> <password>")
 		} else {
 			// Overwrite previous entries if they exist
-			delete_entry(args[1], args[2])
+			// delete_entry has to run for every new entry - is this necesarry?
+			db := delete_entry(db, args[1], args[2], false)
 			new_entry(db, args[1], args[2], args[3])
 		}
 	}
@@ -75,7 +76,7 @@ main :: proc() {
 		if len(args) != 3 {
 				fmt.println("Usage: delete <website> <username>")
 			} else {
-				delete_entry(args[1], args[2])
+				delete_entry(db, args[1], args[2], true)
 			}
 		}
 	
