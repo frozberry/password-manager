@@ -55,7 +55,7 @@ main :: proc() {
 		} else {
 			// Overwrite previous entries if they exist
 			delete_entry(args[1], args[2])
-			new_entry(args[1], args[2], args[3])
+			new_entry(db, args[1], args[2], args[3])
 		}
 	}
 

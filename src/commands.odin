@@ -5,7 +5,7 @@ import "core:slice"
 import "core:os"
 
 
-new_entry :: proc(website: string, username: string, password: string) {
+new_entry :: proc(db: u8[], website: string, username: string, password: string) {
 	// I convert between bytes and string multiple times here, gross
 	// How does encrypt change a global variable???
 
@@ -13,9 +13,6 @@ new_entry :: proc(website: string, username: string, password: string) {
 	encrytped_password := encrypt(password_bytes[:])
 	encrytped_password_string := bytes_to_string(encrytped_password)
 	entry_bytes := input_to_bytes(website, username, encrytped_password_string)
-
-
-
 	db := read_db()
 	entries := parse_entries(db[:])
 
@@ -27,8 +24,7 @@ new_entry :: proc(website: string, username: string, password: string) {
 }
 
 get :: proc(db: []u8, website: string, username: string) {
-	db := read_db()
-	entries := parse_entries(db[:])
+	entries := parse_entries(db)
 
 	// Duplicate entries should be overwritten by the last match
 	entry: Entry
@@ -53,7 +49,7 @@ get :: proc(db: []u8, website: string, username: string) {
 }
 
 list :: proc(db: []u8) {
-	entries := parse_entries(db[:])
+	entries := parse_entries(db)
 
 	for entry in entries {
 		fmt.printf("Site: %s, Username: %s\n", entry.website, entry.username)
